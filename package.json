@@ -1,0 +1,13 @@
+{
+  "name": "threadbare-execution-desk",
+  "version": "0.1.0",
+  "private": true,
+  "license": "MIT",
+  "scripts": {
+    "build": "esbuild src/app.js --bundle --format=esm --platform=browser --outfile=assets/app.js",
+    "check": "node tests/check.cjs"
+  },
+  "devDependencies": {
+    "esbuild": "0.27.3"
+  }
+}

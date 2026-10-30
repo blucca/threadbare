@@ -1,0 +1,62 @@
+{
+  "provenance": "Self-authored synthetic orders. Recorded n8n 2.41.7; read-only replay of saved executions.",
+  "source": "https://github.com/blucca/n8n-check/tree/8c83e93c0d26188db1dcafdb763dcfb4dc03abf6/experiments/lineage-boundary",
+  "same_business_json": true,
+  "business_nodes_compared": 11,
+  "original": {
+    "execution_statuses": {
+      "parent": "success",
+      "child": "success"
+    },
+    "expected_recipients": [
+      "customer-D",
+      "customer-C"
+    ],
+    "actual_recipients": [
+      "customer-A",
+      "customer-B"
+    ],
+    "requests": [
+      {
+        "slot": 0,
+        "recipient": "customer-A",
+        "sku": "same-product",
+        "quantity": 1
+      },
+      {
+        "slot": 1,
+        "recipient": "customer-B",
+        "sku": "same-product",
+        "quantity": 1
+      }
+    ]
+  },
+  "repaired": {
+    "execution_statuses": {
+      "parent": "success",
+      "child": "success"
+    },
+    "expected_recipients": [
+      "customer-D",
+      "customer-C"
+    ],
+    "actual_recipients": [
+      "customer-D",
+      "customer-C"
+    ],
+    "requests": [
+      {
+        "slot": 0,
+        "recipient": "customer-D",
+        "sku": "same-product",
+        "quantity": 1
+      },
+      {
+        "slot": 1,
+        "recipient": "customer-C",
+        "sku": "same-product",
+        "quantity": 1
+      }
+    ]
+  }
+}
