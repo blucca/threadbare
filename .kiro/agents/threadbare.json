@@ -1,0 +1,25 @@
+{
+  "name": "threadbare",
+  "description": "Saved n8n execution evidence and browser adaptation",
+  "prompt": "Implement the execution-desk spec in this repository. Reuse the existing deterministic audit core and preserve its scope. Work only within this repository. Read the configured spec/steering before code changes. Public evidence must come from saved raw data; keep model service credentials out of files and output.",
+  "tools": [
+    "read",
+    "write",
+    "shell"
+  ],
+  "resources": [
+    "file://.kiro/steering/evidence.md",
+    "file://.kiro/specs/execution-desk/*.md"
+  ],
+  "includeMcpJson": false,
+  "hooks": [
+    {
+      "name": "check-saved-evidence",
+      "trigger": "AgentStop",
+      "action": {
+        "type": "command",
+        "command": "node tests/check.cjs"
+      }
+    }
+  ]
+}
