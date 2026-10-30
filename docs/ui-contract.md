@@ -10,6 +10,6 @@ Main JavaScript will update these hooks; frontend owns index.html/style.css only
 - `#http-observations`: demo-only separate recorded HTTP observations; hidden for custom data.
 - `#download-report`: local download; `#open-import`, `#close-import`: show/close the import dialog.
 - `#import-dialog` native `<dialog>`; `#parent-file`, `#child-file` file inputs (accept JSON); `#import-drop` drag/drop region for one or two files; `#import-status`, `#child-help`, `#import-audit` for action/status; `#return-demo` button.
-- `#scope-note`: footer contract. A normal link to GitHub source (https://github.com/blucca/threadbare) and a mailto repair link (mailto:blucca.contact@gmail.com?subject=n8n%20repair%20scope) may be present, but main will confirm existing business mailbox before publication.
+- `#scope-note`: footer contract. A normal link to GitHub source (https://github.com/blucca/threadbare) and a mailto repair link (mailto:belgialucca@gmail.com?subject=n8n%20repair%20scope) may be present, copied from the existing public n8n-check work order.
 
 UI language is sentence case. Status names mismatch / consistent / incomplete are source states; explain them in human language. The main SVG wires have classes `.wire-observed`, `.wire-expected`, `.is-selected`, and `.is-consistent`. Use magenta solid for the parent recorded wrong origin, copper dashed for the child-resolved expected origin; both become clearly labeled consistent in repaired mode. Hover is restrained; animate only action-triggered changes with reduced-motion support.

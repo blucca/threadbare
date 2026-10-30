@@ -5,7 +5,7 @@
 // Read-only diagnosis of one recorded, waiting, once-mode child call.
 // This checks ancestry at the call boundary; business expectations stay separate.
 // Browser-compatible: no Node fs/util imports at module top
-const { findPairedItemThroughWorkflowData: trace } = require('./backtracking.cjs');
+const { findPairedItemThroughWorkflowData: trace, pointer } = require('./backtracking.cjs');
 const { jsonDeepEqual } = require('./json-equal.cjs');
 
 function requireEvidence(condition, reason) {
@@ -44,9 +44,12 @@ function auditBoundary(parent, child, options = {}) {
   requireEvidence(parent?.status === 'success', 'Parent execution status is not "success"');
   requireEvidence(child?.status === 'success', 'Child execution status is not "success"');
 
+  requireEvidence(Array.isArray(parent.workflowData?.nodes), 'Missing /workflowData/nodes in parent execution');
+  requireEvidence(Array.isArray(child.workflowData?.nodes), 'Missing /workflowData/nodes in child execution');
+
   const calls = [];
   for (const [node, runs] of Object.entries(parentRuns)) {
-    requireEvidence(Array.isArray(runs), `Invalid parent runData at /data/resultData/runData/${node}`);
+    requireEvidence(Array.isArray(runs), 'Invalid parent runData at ' + pointer('data', 'resultData', 'runData', node));
     for (const [run, task] of runs.entries()) {
       if (String(task.metadata?.subExecution?.executionId) === String(child.id)) {
         calls.push({ node, run, task });
@@ -69,9 +72,9 @@ function auditBoundary(parent, child, options = {}) {
 
   const roots = [];
   for (const [name, runs] of Object.entries(childRuns)) {
-    requireEvidence(Array.isArray(runs), `Invalid child runData at /data/resultData/runData/${name}`);
+    requireEvidence(Array.isArray(runs), 'Invalid child runData at ' + pointer('data', 'resultData', 'runData', name));
     for (const [index, value] of runs.entries()) {
-      requireEvidence(Array.isArray(value.source), `Missing child source edges at /data/resultData/runData/${name}/${index}/source`);
+      requireEvidence(Array.isArray(value.source), 'Missing child source edges at ' + pointer('data', 'resultData', 'runData', name, index, 'source'));
       if (!value.source.some(source => source?.previousNode)) roots.push({ name, index, task: value });
     }
   }
@@ -103,7 +106,7 @@ function auditBoundary(parent, child, options = {}) {
   const input = parentRuns[source.previousNode]?.[sourceRun]?.data?.main?.[sourceOutput];
   const start = root.task.data?.main;
   
-  requireEvidence(Array.isArray(input), `Missing caller input data at /data/resultData/runData/${source.previousNode}/${sourceRun}/data/main/${sourceOutput}`);
+  requireEvidence(Array.isArray(input), 'Missing caller input data at ' + pointer('data', 'resultData', 'runData', source.previousNode, sourceRun, 'data', 'main', sourceOutput));
   requireEvidence(start?.length === 1, 'Missing child trigger data main array');
   requireEvidence(Array.isArray(start[0]), 'Child trigger data main[0] is not an array');
   requireEvidence(start[0].length === input.length, 'Caller input and child trigger item counts differ');
@@ -116,16 +119,19 @@ function auditBoundary(parent, child, options = {}) {
   }
 
   const last = childData.resultData.lastNodeExecuted;
-  const returned = childRuns[last]?.at(-1)?.data?.main;
+  requireEvidence(typeof last === 'string', 'Missing /data/resultData/lastNodeExecuted in child execution');
+  const terminalRun = childRuns[last]?.length - 1;
+  requireEvidence(Number.isInteger(terminalRun) && terminalRun >= 0,
+    'Missing child terminal run at ' + pointer('data', 'resultData', 'runData', last));
+  const returned = childRuns[last][terminalRun]?.data?.main;
   const actual = task.data?.main;
   
-  requireEvidence(Array.isArray(returned), `Missing child terminal output at /data/resultData/runData/${last} last run data/main`);
-  requireEvidence(Array.isArray(actual), `Missing caller output at /data/resultData/runData/${node}/${run}/data/main`);
+  requireEvidence(Array.isArray(returned), 'Missing child terminal output at ' + pointer('data', 'resultData', 'runData', last, terminalRun, 'data', 'main'));
+  requireEvidence(Array.isArray(actual), 'Missing caller output at ' + pointer('data', 'resultData', 'runData', node, run, 'data', 'main'));
   requireEvidence(returned.length === actual.length,
     'Child terminal output and caller output shapes differ');
   
   const findings = [];
-  const evidencePaths = [];
   
   for (const [output, items] of actual.entries()) {
     requireEvidence(Array.isArray(items), `Caller output ${output} is not an array`);
@@ -138,21 +144,11 @@ function auditBoundary(parent, child, options = {}) {
       requireEvidence(jsonDeepEqual(item.json, terminal.json),
         'Caller output JSON differs from the recorded child terminal item at output ' + output + ', item ' + index);
       
-      // Trace with evidence capture if includePaths is true
-      let traceResult, pathEdges = [];
-      if (includePaths) {
-        pathEdges = [];
-        traceResult = trace(childData, terminal, index, {
-          output: output,
-          onStep: (edge) => pathEdges.push(edge)
-        });
-      } else {
-        traceResult = trace(childData, terminal, index);
-      }
-      
-      // Handle both legacy return format and new evidence format
-      const traceRoots = traceResult?.roots ?? traceResult;
-      const expected = pairs(traceRoots);
+      const pathEdges = [];
+      const expected = pairs(trace(childData, terminal, index, includePaths ? {
+        output,
+        onStep: edge => pathEdges.push(edge)
+      } : undefined));
       requireEvidence(expected.every(pair => pair.input === 0 && pair.item < input.length),
         'Child ancestry does not resolve within the recorded caller input at output ' + output + ', item ' + index);
       
@@ -165,7 +161,9 @@ function auditBoundary(parent, child, options = {}) {
         status: jsonDeepEqual(expected, observed) ? 'consistent' : 'mismatch'
       };
       
-      if (includePaths && pathEdges.length > 0) {
+      if (includePaths) {
+        finding.parent_paired_item_path = pointer('data', 'resultData', 'runData', node, run, 'data', 'main', output, index, 'pairedItem');
+        finding.parent_paired_item = item.pairedItem;
         finding.path = pathEdges;
       }
       
@@ -190,16 +188,11 @@ function auditBoundary(parent, child, options = {}) {
   };
   
   if (includePaths) {
-    // RFC 6901 JSON Pointer escaping
-    function escapePointerComponent(component) {
-      return component.replace(/~/g, '~0').replace(/\//g, '~1');
-    }
-    
     report.evidence = {
-      parent_call: `/data/resultData/runData/${escapePointerComponent(node)}/${run}`,
-      caller_input: `/data/resultData/runData/${escapePointerComponent(source.previousNode)}/${sourceRun}/data/main/${sourceOutput}`,
-      child_root: `/data/resultData/runData/${escapePointerComponent(root.name)}/${root.index}`,
-      child_terminal: `/data/resultData/runData/${escapePointerComponent(last)}/${childRuns[last].length - 1}/data/main`
+      parent_call: pointer('data', 'resultData', 'runData', node, run),
+      caller_input: pointer('data', 'resultData', 'runData', source.previousNode, sourceRun, 'data', 'main', sourceOutput),
+      child_root: pointer('data', 'resultData', 'runData', root.name, root.index),
+      child_terminal: pointer('data', 'resultData', 'runData', last, terminalRun, 'data', 'main')
     };
   }
   

@@ -1,0 +1,139 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="theme-color" content="#20233F">
+    <meta name="description" content="Trace crossed item ancestry in n8n sub-executions. Compare recorded parent inputs with child-native origins, inspect raw evidence, and take a local structural report with you.">
+    <title>Threadbare — n8n execution desk</title>
+    <link rel="icon" href="assets/cord.svg" type="image/svg+xml">
+    <link rel="preload" href="assets/fonts/atkinson-regular.ttf" as="font" type="font/ttf" crossorigin>
+    <link rel="preload" href="assets/fonts/barlow-condensed-bold.ttf" as="font" type="font/ttf" crossorigin>
+    <link rel="stylesheet" href="style.css">
+    <script type="module" src="assets/app.js"></script>
+  </head>
+  <body>
+    <a class="skip-link" href="#execution-desk">Skip to the execution desk</a>
+
+    <header class="site-header page-width">
+      <a class="brand" href="./" aria-label="Threadbare home">
+        <svg class="brand-cord" viewBox="0 0 42 42" fill="none" aria-hidden="true">
+          <path d="M9 10v13a10 10 0 0 0 20 0v-5a6 6 0 0 0-12 0v14" stroke="currentColor" stroke-width="3.2" stroke-linecap="round"/>
+          <circle cx="9" cy="7" r="3" fill="currentColor"/>
+          <circle cx="17" cy="35" r="3" fill="currentColor"/>
+          <path d="M29 9v3" stroke="#DB507F" stroke-width="3.2" stroke-linecap="round"/>
+        </svg>
+        <span>Threadbare</span>
+      </a>
+      <button class="button button-primary" id="open-import" type="button">
+        <svg viewBox="0 0 20 20" fill="none" aria-hidden="true"><path d="M10 3v9m-3-3 3 3 3-3M4 13v4h12v-4" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        Import executions
+      </button>
+    </header>
+
+    <main class="page-width" id="execution-desk">
+      <section class="case-intro" aria-labelledby="case-title">
+        <h1 id="case-title">Customer D’s order reached Customer A.</h1>
+        <p class="case-subtitle" id="case-subtitle">Both recorded runs succeeded. Follow a returned item to see where the parent’s recorded input and the child’s native origin part ways.</p>
+        <div class="case-meta">
+          <p id="case-provenance">Loading the self-authored, recorded n8n case…</p>
+          <button class="text-button" id="return-demo" type="button" hidden>Return to recorded demo</button>
+        </div>
+      </section>
+
+      <section class="dispatch-desk" aria-labelledby="board-title">
+        <div class="desk-rail">
+          <div class="desk-heading">
+            <h2 id="board-title">Follow the returned item</h2>
+            <p>Choose a return. Inspect both ends of its thread.</p>
+          </div>
+          <div class="mode-switch" role="group" aria-label="Recorded demo version">
+            <button id="mode-original" type="button" aria-pressed="true">Original</button>
+            <button id="mode-repaired" type="button" aria-pressed="false">Repaired</button>
+          </div>
+        </div>
+
+        <div class="board-column-headings" aria-hidden="true">
+          <span>Parent inputs</span>
+          <span>Returned items</span>
+        </div>
+        <div id="switchboard" aria-label="Parent recorded inputs and child-resolved origins">
+          <p class="board-loading" role="status">Connecting the recorded executions…</p>
+        </div>
+      </section>
+
+      <div class="desk-status" role="status" aria-live="polite" aria-atomic="true">
+        <p class="overall-status" id="overall-status">Reading executions</p>
+        <p id="status-detail">The desk compares ancestry at the sub-execution boundary.</p>
+      </div>
+
+      <section class="selection-slip" aria-label="Selected return">
+        <div id="selection-summary"><p>Choose a returned item to inspect its recorded and resolved origins.</p></div>
+        <button class="button button-outline" id="trace-item" type="button" disabled aria-controls="evidence-panel">Trace selected item</button>
+      </section>
+
+      <section class="evidence-panel" id="evidence-panel" aria-labelledby="evidence-title" hidden>
+        <div class="section-heading">
+          <h2 id="evidence-title">The recorded thread</h2>
+          <p>Original execution addresses, paired items, and source entries.</p>
+        </div>
+        <div id="evidence-steps"></div>
+      </section>
+
+      <section class="http-observations" id="http-observations" aria-label="Separately recorded HTTP observations" hidden></section>
+
+      <section class="report-strip" aria-label="Take the evidence with you">
+        <div>
+          <h2>Keep the structural evidence.</h2>
+          <p>Download the finding, coordinates, and provenance. Business JSON stays out of the report.</p>
+        </div>
+        <button class="button button-primary" id="download-report" type="button" disabled>
+          <svg viewBox="0 0 20 20" fill="none" aria-hidden="true"><path d="M10 3v9m-3-3 3 3 3-3M4 13v4h12v-4" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          Download report
+        </button>
+      </section>
+    </main>
+
+    <footer class="site-footer page-width">
+      <p id="scope-note">Threadbare checks recorded item ancestry across an n8n parent–child execution boundary. Imports and reports run locally in your browser.</p>
+      <nav aria-label="Project and repair">
+        <a href="https://github.com/blucca/threadbare" target="_blank" rel="noopener noreferrer">Source on GitHub</a>
+        <a href="mailto:belgialucca@gmail.com?subject=n8n%20repair%20scope">Scope a $199 repair</a>
+      </nav>
+    </footer>
+
+    <dialog id="import-dialog" aria-labelledby="import-title" aria-describedby="import-description">
+      <div class="dialog-header">
+        <h2 id="import-title">Bring your executions to the desk.</h2>
+        <button class="icon-button" id="close-import" type="button" aria-label="Close import">
+          <svg viewBox="0 0 20 20" fill="none" aria-hidden="true"><path d="m5 5 10 10M15 5 5 15" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/></svg>
+        </button>
+      </div>
+      <div class="dialog-body">
+        <p id="import-description">Use two complete n8n API execution JSON records, saved with <code>includeData=true</code>. Choose the parent first to find the child execution it actually called.</p>
+        <div id="import-drop" class="import-drop">
+          <svg viewBox="0 0 32 32" fill="none" aria-hidden="true"><path d="M10 6H6v20h20v-4M14 4h12v14H14zM18 9h4M18 13h4" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          <p>Drop one or two execution files here<span>Or choose the files below.</span></p>
+        </div>
+        <div class="file-pair">
+          <div class="file-field">
+            <label for="parent-file">Parent execution JSON</label>
+            <input id="parent-file" type="file" accept=".json,application/json" aria-describedby="parent-file-hint">
+            <p id="parent-file-hint">The execution containing the sub-workflow call.</p>
+          </div>
+          <div class="file-field">
+            <label for="child-file">Child execution JSON</label>
+            <input id="child-file" type="file" accept=".json,application/json" aria-describedby="child-file-hint">
+            <p id="child-file-hint">The complete execution identified by that call.</p>
+          </div>
+        </div>
+        <div class="child-help" id="child-help" hidden></div>
+        <div class="import-status" id="import-status" role="status" aria-live="polite">Choose a parent execution to begin.</div>
+      </div>
+      <div class="dialog-footer">
+        <p>Parsed on this desk, in your browser.</p>
+        <button class="button button-primary" id="import-audit" type="button" disabled>Audit executions</button>
+      </div>
+    </dialog>
+  </body>
+</html>
