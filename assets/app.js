@@ -545,7 +545,8 @@ function renderBoard() {
   const legend = make("div", void 0, "board-legend");
   for (const [role, label] of [["observed", "Parent recorded"], ["expected", "Child resolves"]]) {
     const item = make("span");
-    item.append(make("span", void 0, "legend-line " + role), document.createTextNode(label));
+    const consistent = role === "observed" && report.status === "consistent" ? " consistent" : "";
+    item.append(make("span", void 0, "legend-line " + role + consistent), document.createTextNode(label));
     legend.append(item);
   }
   stage.append(legend);
