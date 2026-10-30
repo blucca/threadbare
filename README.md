@@ -8,7 +8,7 @@ The desk is for n8n delivery engineers investigating a saved parent–child hand
 
 ## Try the case
 
-[Open the desk](https://blucca.github.io/threadbare/) · [Source](https://github.com/blucca/threadbare)
+[Open the desk](https://blucca.github.io/threadbare/) · [Source](https://github.com/blucca/threadbare) · [Watch the 2:34 walkthrough](https://blucca.github.io/threadbare/demo/)
 
 For a local checkout:
 

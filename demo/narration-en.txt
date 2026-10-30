@@ -1,0 +1,13 @@
+Customer D's order went to A. This saved native n8n run uses synthetic orders. Both workflows succeeded. Across original and repaired recordings, all eleven business-node JSON snapshots match. The mistake lives in the pairing.
+
+Threadbare follows a returned item across the parent and child handoff. Output zero, item zero resolves to input item three, customer D. But the parent records input item zero, customer A.
+
+The parent's original paired item has its own address. Now follow the child's actual saved thread. Each step preserves node, run, output, item, source, and a verifiable JSON pointer. Here, Select input one chooses source one. Right Sort leads to Start, item three. The lines follow those recorded edges.
+
+Repaired loads the separately saved repair and runs the same auditor: zero mismatches. The business JSON is unchanged. This case's separate recorded HTTP requests show delivery changing from A and B to D and C.
+
+For your own case, save the full parent API response with include data true. I'm importing the bundled synthetic files here. Parent first: its saved call identifies child execution four. The desk provides the exact download command. Add that child response and audit. File contents stay in this browser.
+
+Download the structural report for a repair review: execution IDs, findings, coordinates, and original evidence pointers. It leaves business item JSON out, so a reviewer can open the same addresses in their saved files.
+
+Kiro C L I version three read these specs and steering, built the browser equality and audit evidence, and ran the fixture checks. Its implementation checkpoint is preserved. Integration review refined the same walker. Threadbare turns a midnight dispatch-board costume into an instrument for a real investigation.

@@ -1,0 +1,83 @@
+WEBVTT
+
+00:00:00.000 --> 00:00:05.460
+Customer D's order went to A. This saved native n8n run uses synthetic orders.
+
+00:00:05.480 --> 00:00:07.570
+Both workflows succeeded.
+
+00:00:07.590 --> 00:00:13.676
+Across original and repaired recordings, all eleven business-node JSON snapshots match.
+
+00:00:13.696 --> 00:00:15.480
+The mistake lives in the pairing.
+
+00:00:17.040 --> 00:00:21.461
+Threadbare follows a returned item across the parent and child handoff.
+
+00:00:21.481 --> 00:00:30.216
+Output zero, item zero resolves to input item three, customer D. But the parent records input item zero, customer A.
+
+00:00:33.080 --> 00:00:36.632
+The parent's original paired item has its own address.
+
+00:00:36.652 --> 00:00:39.636
+Now follow the child's actual saved thread.
+
+00:00:39.656 --> 00:00:46.185
+Each step preserves node, run, output, item, source, and a verifiable JSON pointer.
+
+00:00:46.205 --> 00:00:49.798
+Here, Select input one chooses source one.
+
+00:00:49.818 --> 00:00:52.854
+Right Sort leads to Start, item three.
+
+00:00:52.874 --> 00:00:55.184
+The lines follow those recorded edges.
+
+00:01:02.120 --> 00:01:07.741
+Repaired loads the separately saved repair and runs the same auditor: zero mismatches.
+
+00:01:07.761 --> 00:01:10.155
+The business JSON is unchanged.
+
+00:01:10.175 --> 00:01:16.520
+This case's separate recorded HTTP requests show delivery changing from A and B to D and C.
+
+00:01:22.120 --> 00:01:27.341
+For your own case, save the full parent API response with include data true.
+
+00:01:27.361 --> 00:01:30.412
+I'm importing the bundled synthetic files here.
+
+00:01:30.432 --> 00:01:35.000
+Parent first: its saved call identifies child execution four.
+
+00:01:35.020 --> 00:01:38.191
+The desk provides the exact download command.
+
+00:01:38.211 --> 00:01:40.668
+Add that child response and audit.
+
+00:01:40.688 --> 00:01:42.904
+File contents stay in this browser.
+
+00:01:51.160 --> 00:01:59.883
+Download the structural report for a repair review: execution IDs, findings, coordinates, and original evidence pointers.
+
+00:01:59.903 --> 00:02:05.848
+It leaves business item JSON out, so a reviewer can open the same addresses in their saved files.
+
+00:02:09.200 --> 00:02:17.544
+Kiro C L I version three read these specs and steering, built the browser equality and audit evidence, and ran the fixture checks.
+
+00:02:17.564 --> 00:02:20.457
+Its implementation checkpoint is preserved.
+
+00:02:20.477 --> 00:02:23.525
+Integration review refined the same walker.
+
+00:02:23.545 --> 00:02:29.048
+Threadbare turns a midnight dispatch-board costume into an instrument for a real investigation.
+

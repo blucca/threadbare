@@ -41,3 +41,5 @@ npm run check
 ```
 
 Public evidence consists of the root configuration, spec/steering, implementation checkpoint, current source, and reproducible fixture checks. Raw service logs and account credentials remain private.
+
+The [2:34 product walkthrough](https://blucca.github.io/threadbare/demo/) shows the real desk, local import, and edited excerpts of this completed Kiro build.
