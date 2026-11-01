@@ -41,6 +41,16 @@ assert.ok(jsonDeepEqual({ a: 1, b: [2] }, { b: [2], a: 1 }));
 assert.ok(!jsonDeepEqual([1, 2], [2, 1]));
 const absent = structuredClone(original[0]); delete absent.data.resultData.runData;
 assert.throws(() => auditBoundary(absent, original[1]), /\/data\/resultData\/runData/);
+for (const role of ['parent', 'child']) {
+  const pair = structuredClone(repaired);
+  const execution = role === 'parent' ? pair[0] : pair[1];
+  const other = role === 'parent' ? pair[1] : pair[0];
+  const edge = role === 'parent' ? 'parentExecution' : 'subExecution';
+  delete execution.workflowId;
+  const task = Object.values(other.data.resultData.runData).flat().find(value => value.metadata?.[edge]);
+  delete task.metadata[edge].workflowId;
+  assert.throws(() => auditBoundary(...pair), /\/workflowId/);
+}
 
 // Real node names can contain slashes/tilde: every resulting address still resolves.
 const escaped = structuredClone(original[1]), renamed = last + '/~';

@@ -53,7 +53,7 @@ Custom files are parsed locally in the browser. Your instance URL and API key st
 ## Supported boundary
 
 - One recorded **Execute Workflow 1.2** call matching the supplied child, in **once** mode and waiting for completion.
-- Successful parent and child executions, with a single recorded caller input source.
+- Successful parent and child executions, with present execution/workflow IDs and a single recorded caller input source. Matching missing IDs produce `incomplete`.
 - One child input boundary: a **passthrough Execute Workflow Trigger** at its first saved run, preserving caller input JSON, item order, and pairing.
 - Complete saved item provenance and source entries through the child; matching child terminal and parent returned JSON.
 

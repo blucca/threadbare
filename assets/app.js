@@ -168,6 +168,12 @@ var require_audit_executions = __commonJS({
     function requireEvidence(condition, reason) {
       if (!condition) throw new Error(reason);
     }
+    function hasId(value) {
+      return typeof value === "string" && value.length > 0 || Number.isInteger(value) && value >= 0;
+    }
+    function sameId(actual, expected) {
+      return hasId(actual) && hasId(expected) && String(actual) === String(expected);
+    }
     function pairs(value) {
       requireEvidence(value !== void 0, "Missing pairedItem provenance");
       const entries = Array.isArray(value) ? value : [value];
@@ -191,8 +197,10 @@ var require_audit_executions = __commonJS({
       const parentRuns = parent?.data?.resultData?.runData;
       const childData = child?.data;
       const childRuns = childData?.resultData?.runData;
-      requireEvidence(parent?.id, "Missing /id in parent execution");
-      requireEvidence(child?.id, "Missing /id in child execution");
+      requireEvidence(hasId(parent?.id), "Missing or invalid /id in parent execution");
+      requireEvidence(hasId(child?.id), "Missing or invalid /id in child execution");
+      requireEvidence(hasId(parent?.workflowId), "Missing or invalid /workflowId in parent execution");
+      requireEvidence(hasId(child?.workflowId), "Missing or invalid /workflowId in child execution");
       requireEvidence(parentRuns, "Missing /data/resultData/runData in parent execution");
       requireEvidence(childRuns, "Missing /data/resultData/runData in child execution");
       requireEvidence(parent?.status === "success", 'Parent execution status is not "success"');
@@ -203,7 +211,7 @@ var require_audit_executions = __commonJS({
       for (const [node2, runs] of Object.entries(parentRuns)) {
         requireEvidence(Array.isArray(runs), "Invalid parent runData at " + pointer("data", "resultData", "runData", node2));
         for (const [run2, task2] of runs.entries()) {
-          if (String(task2.metadata?.subExecution?.executionId) === String(child.id)) {
+          if (sameId(task2.metadata?.subExecution?.executionId, child.id)) {
             calls2.push({ node: node2, run: run2, task: task2 });
           }
         }
@@ -223,7 +231,7 @@ var require_audit_executions = __commonJS({
         "Use a waiting once-mode child call"
       );
       requireEvidence(
-        String(task.metadata.subExecution.workflowId) === String(child.workflowId),
+        sameId(task.metadata.subExecution.workflowId, child.workflowId),
         "Child workflow ID differs from the actual parent call edge"
       );
       const roots = [];
@@ -254,11 +262,11 @@ var require_audit_executions = __commonJS({
       const reverseEdge = root.task.metadata?.parentExecution;
       requireEvidence(reverseEdge, "Missing child parentExecution metadata");
       requireEvidence(
-        String(reverseEdge?.executionId) === String(parent.id),
+        sameId(reverseEdge?.executionId, parent.id),
         "Child parentExecution executionId differs from this parent"
       );
       requireEvidence(
-        String(reverseEdge?.workflowId) === String(parent.workflowId),
+        sameId(reverseEdge?.workflowId, parent.workflowId),
         "Child parentExecution workflowId differs from this parent"
       );
       requireEvidence(task.source?.length === 1, "Expected a single recorded caller input edge");

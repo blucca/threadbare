@@ -12,6 +12,15 @@ function requireEvidence(condition, reason) {
   if (!condition) throw new Error(reason);
 }
 
+function hasId(value) {
+  return (typeof value === 'string' && value.length > 0) ||
+    (Number.isInteger(value) && value >= 0);
+}
+
+function sameId(actual, expected) {
+  return hasId(actual) && hasId(expected) && String(actual) === String(expected);
+}
+
 function pairs(value) {
   requireEvidence(value !== undefined, 'Missing pairedItem provenance');
   const entries = Array.isArray(value) ? value : [value];
@@ -37,8 +46,10 @@ function auditBoundary(parent, child, options = {}) {
   const childRuns = childData?.resultData?.runData;
   
   // Improved error messages with actual JSON pointers
-  requireEvidence(parent?.id, 'Missing /id in parent execution');
-  requireEvidence(child?.id, 'Missing /id in child execution');
+  requireEvidence(hasId(parent?.id), 'Missing or invalid /id in parent execution');
+  requireEvidence(hasId(child?.id), 'Missing or invalid /id in child execution');
+  requireEvidence(hasId(parent?.workflowId), 'Missing or invalid /workflowId in parent execution');
+  requireEvidence(hasId(child?.workflowId), 'Missing or invalid /workflowId in child execution');
   requireEvidence(parentRuns, 'Missing /data/resultData/runData in parent execution');
   requireEvidence(childRuns, 'Missing /data/resultData/runData in child execution');
   requireEvidence(parent?.status === 'success', 'Parent execution status is not "success"');
@@ -51,7 +62,7 @@ function auditBoundary(parent, child, options = {}) {
   for (const [node, runs] of Object.entries(parentRuns)) {
     requireEvidence(Array.isArray(runs), 'Invalid parent runData at ' + pointer('data', 'resultData', 'runData', node));
     for (const [run, task] of runs.entries()) {
-      if (String(task.metadata?.subExecution?.executionId) === String(child.id)) {
+      if (sameId(task.metadata?.subExecution?.executionId, child.id)) {
         calls.push({ node, run, task });
       }
     }
@@ -67,7 +78,7 @@ function auditBoundary(parent, child, options = {}) {
     'Use a waiting once-mode child call');
   requireEvidence(definition.parameters?.options?.waitForSubWorkflow !== false,
     'Use a waiting once-mode child call');
-  requireEvidence(String(task.metadata.subExecution.workflowId) === String(child.workflowId),
+  requireEvidence(sameId(task.metadata.subExecution.workflowId, child.workflowId),
     'Child workflow ID differs from the actual parent call edge');
 
   const roots = [];
@@ -93,9 +104,9 @@ function auditBoundary(parent, child, options = {}) {
   
   const reverseEdge = root.task.metadata?.parentExecution;
   requireEvidence(reverseEdge, 'Missing child parentExecution metadata');
-  requireEvidence(String(reverseEdge?.executionId) === String(parent.id),
+  requireEvidence(sameId(reverseEdge?.executionId, parent.id),
     'Child parentExecution executionId differs from this parent');
-  requireEvidence(String(reverseEdge?.workflowId) === String(parent.workflowId),
+  requireEvidence(sameId(reverseEdge?.workflowId, parent.workflowId),
     'Child parentExecution workflowId differs from this parent');
 
   requireEvidence(task.source?.length === 1, 'Expected a single recorded caller input edge');
